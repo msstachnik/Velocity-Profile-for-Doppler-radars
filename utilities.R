@@ -42,6 +42,32 @@ VP_sample = function(mag, heading, az_spread, n_samples = 10, sigma_rr = 0.03, s
 
   VP = list(az_sample = az_sample, rr_sample = rr_sample,
             mag = mag, heading = heading,Vx = Vx, Vy = Vy, 
-            n_samples = n_samples, sigma_rr = sigma_rr, sigma_az = sigma_az)
+            n_samples = n_samples, az_spread = az_spread,
+            sigma_rr = sigma_rr, sigma_az = sigma_az);
   VP
- }
+}
+
+hypot = function(x, y)
+{
+  d = base::sqrt(x^2 + y^2);
+  d
+}
+angle_diff = function(ref_angle, meas_angle)
+{
+  a = ((ref_angle - meas_angle) + pi/2) %% pi - pi/2;
+  a
+}
+VP_ref = function(vp_sample)
+{
+  vp_sample$az_sample = NULL;
+  vp_sample$rr_sample = NULL;
+  vp_sample$sigma_rr = NULL;
+  vp_sample$sigma_az = NULL;
+  vp_sample
+}
+
+list2df = function(list_in)
+{
+  df = base::data.frame(base::t(base::sapply(list_in, `[`)));
+  df
+}
