@@ -28,8 +28,8 @@ vp2rr = function(Vx, Vy, azimuth)
 # Single Velocity profile samples
 VP_sample = function(mag, heading, az_spread, n_samples = 10, sigma_rr = 0.03, sigma_az = 0.5)
 {
-  Vx = mag * cos(heading);
-  Vy = mag * sin(heading);
+  Vx = mag * cos(deg2rad(heading));
+  Vy = mag * sin(deg2rad(heading));
   # truth data
   az_truth_deg = base::seq(-az_spread/2, az_spread/2, length.out = n_samples);
   az_truth = deg2rad(az_truth_deg);
@@ -39,10 +39,12 @@ VP_sample = function(mag, heading, az_spread, n_samples = 10, sigma_rr = 0.03, s
   az_sample_deg = az_truth_deg + stats::rnorm(length(az_truth_deg), 0, sigma_az);
   az_sample = deg2rad(az_sample_deg);
   rr_sample = rr_truth + stats::rnorm(length(rr_truth), 0, sigma_rr);
+  
+  az_spread_sample = spread(az_sample_deg);
 
   VP = list(az_sample = az_sample, rr_sample = rr_sample,
-            mag = mag, heading = heading,Vx = Vx, Vy = Vy, 
-            n_samples = n_samples, az_spread = az_spread,
+            mag_ref = mag, heading_ref = heading, Vx_ref = Vx, Vy_ref = Vy, 
+            n_samples = n_samples, az_spread_ref = az_spread, az_spread_sample = az_spread_sample,
             sigma_rr = sigma_rr, sigma_az = sigma_az);
   VP
 }
@@ -69,5 +71,25 @@ VP_ref = function(vp_sample)
 list2df = function(list_in)
 {
   df = base::data.frame(base::t(base::sapply(list_in, `[`)));
+  df = base::data.frame(base::sapply(df, as.numeric));
   df
 }
+
+spread = function(x)
+{
+  s = base::max(x) - base::min(x);
+  s
+}
+rms = function(x)
+{
+  x = as.numeric(x);
+  y = sqrt(sum(x^2)/length(x));
+  y
+}
+
+list2factor = function(x)
+{
+  y = as.factor(round(as.numeric(x)));
+  y
+}
+
