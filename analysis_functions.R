@@ -1,28 +1,34 @@
-ggplot_by_mag_ref_az_spread = function (df, col_name, plot_labels, ylabel)
+ggplot_rms_by_ref_and_group = function (df, deviation_n, reference_n, group_by, plot_labels, ylabel)
 {
-  x_rms = by(df, list2factor(df$az_spread_ref), function(df){
-    x_rms = by(df, list2factor(df$mag_ref), function(df){
-      {x = rms(df[[col_name]]); x}
+  # Generic function for analysis of data set with couple references (at lest 2)
+  # The RMS is calculated for defined variable with reference of defined reference 
+  # and for couple signals levels defined by group
+  
+  # Double nested by to have rms with 2 references
+  by_list_rms = by(df, list2factor(df[[group_by]]), function(df){
+    x_rms = by(df, list2factor(df[[reference_n]]), function(df){
+      {x = rms(df[[deviation_n]]); x}
     })
     x_rms
   })
   
   # Create list of data frames
-  x_rms_df = lapply(x_rms, function(x_rms){
-    df = data.frame(mag_ref = as.numeric(names(x_rms)), y = as.numeric(x_rms));
+  list_df_rms = lapply(by_list_rms, function(by_list_rms){
+    df = data.frame(reference = as.numeric(names(by_list_rms)), deviation = as.numeric(by_list_rms));
     df
   })
   
-  # cummulate data
-  x_rms_df = plyr::ldply(x_rms_df, .id = "az_spread_ref")
+  # Cummulate data
+  rms_df = plyr::ldply(list_df_rms, .id = "group_by")
 
+  # Plot
   library(ggplot2)
-  p = ggplot(x_rms_df, aes(x = mag_ref, y = y, group = az_spread_ref, 
-                       colour = az_spread_ref));
+  p = ggplot(rms_df, aes(x = reference, y = deviation, group = group_by, 
+                       colour = group_by));
   
   p +  geom_line() + 
-    scale_x_continuous(breaks = base::round(base::unique(x_rms_df$mag_ref), 1)) +
+    scale_x_continuous(breaks = base::round(base::unique(rms_df$reference), 1)) +
     scale_y_log10(breaks = base::round(emdbook::lseq(1e-2, 1e2, 13), 2)) + 
     labs(x = plot_labels$xlabel, y = ylabel, title = plot_labels$title, 
-         color ="Reference\nazimuth spread\n[deg]")
+         color =plot_labels$legend)
 }
