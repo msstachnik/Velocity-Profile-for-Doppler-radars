@@ -5,7 +5,7 @@ base::source("analysis_functions.R")
 load('ols_fit.RData')
 
 ## Analysis of 2 samples 
-two_samples = base::subset(vp_out, n_samples == 2);
+two_samples = base::subset(vp_out, n_samples_label == "two");
 
 # Deviation in function of reference magnitude for different azimuth spreads
 plot_labels_two_samples = list(xlabel = "Reference magnitude [m/s]", 
@@ -13,7 +13,6 @@ plot_labels_two_samples = list(xlabel = "Reference magnitude [m/s]",
                                legend = "Reference\nazimuth spread\n[deg]");
 
 ggplot_rms_by_ref_and_group_4_plots(two_samples, "mag_ref", "az_spread_ref_label", plot_labels_two_samples)
-
 
 # Deviation in function of reference heading for different magnitudes for 
 # different levels of azimuth spread

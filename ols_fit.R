@@ -32,9 +32,5 @@ vp_out$mag_ref_label = cut(vp_out$mag_ref, breaks = c(-1, 1, 5, 15, 100),
 vp_out$az_spread_ref_label = cut(vp_out$az_spread_ref, breaks = c(-1, 4, 10, 30, 200), 
                                       labels = c("very low", "low", "medium", "high"));
 
-
 save(vp_out, file = "ols_fit.RData")
-
-
-
 
