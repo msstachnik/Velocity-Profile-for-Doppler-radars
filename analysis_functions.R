@@ -15,10 +15,14 @@ ggplot_by_mag_ref_az_spread = function (df, col_name, plot_labels, ylabel)
   
   # cummulate data
   x_rms_df = plyr::ldply(x_rms_df, .id = "az_spread_ref")
-  
-  # plots
+
   library(ggplot2)
   p = ggplot(x_rms_df, aes(x = mag_ref, y = y, group = az_spread_ref, 
                        colour = az_spread_ref));
-  p +  geom_line() + scale_y_log10() + labs(x = plot_labels$xlabel, y = ylabel, title = plot_labels$title)
+  
+  p +  geom_line() + 
+    scale_x_continuous(breaks = base::round(base::unique(x_rms_df$mag_ref), 1)) +
+    scale_y_log10(breaks = base::round(emdbook::lseq(1e-2, 1e2, 13), 2)) + 
+    labs(x = plot_labels$xlabel, y = ylabel, title = plot_labels$title, 
+         color ="Reference\nazimuth spread\n[deg]")
 }
