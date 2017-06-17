@@ -24,6 +24,15 @@ vp_out$mag_dev = as.numeric(vp_out$mag_ref) - as.numeric(vp_out$mag);
 vp_out$heading_dev = angle_diff(deg2rad(as.numeric(vp_out$heading_ref)), as.numeric(vp_out$heading));
 vp_out$heading_dev_deg = rad2deg(as.numeric(vp_out$heading_dev));
 
+# Add labels
+vp_out$n_samples_label = cut(vp_out$n_samples, breaks = c(-1, 2.5, 5, 15, 100), 
+                           labels = c("two", "low", "medium", "high"));
+vp_out$mag_ref_label = cut(vp_out$mag_ref, breaks = c(-1, 1, 5, 15, 100), 
+                           labels = c("zero", "low", "medium", "high"));
+vp_out$az_spread_ref_label = cut(vp_out$az_spread_ref, breaks = c(-1, 4, 10, 30, 200), 
+                                      labels = c("very low", "low", "medium", "high"));
+
+
 save(vp_out, file = "ols_fit.RData")
 
 

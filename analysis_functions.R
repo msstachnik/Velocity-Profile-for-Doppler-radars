@@ -24,11 +24,28 @@ ggplot_rms_by_ref_and_group = function (df, deviation_n, reference_n, group_by, 
   # Plot
   library(ggplot2)
   p = ggplot(rms_df, aes(x = reference, y = deviation, group = group_by, 
-                       colour = group_by));
-  
-  p +  geom_line() + 
+                       colour = group_by)) +  
+    geom_line() + 
     scale_x_continuous(breaks = base::round(base::unique(rms_df$reference), 1)) +
     scale_y_log10(breaks = base::round(emdbook::lseq(1e-2, 1e2, 13), 2)) + 
     labs(x = plot_labels$xlabel, y = ylabel, title = plot_labels$title, 
-         color =plot_labels$legend)
+         color = plot_labels$legend)
+  
+  print(p)
+}
+
+ggplot_rms_by_ref_and_group_4_plots = function(df, reference_n, group_by, plot_labels)
+{
+  # Reduced version of function to plot all 4 deviations types
+  ggplot_rms_by_ref_and_group(df, "mag_dev", reference_n, group_by,
+                              plot_labels, "Magnitude RMSE [m/s]")
+  
+  ggplot_rms_by_ref_and_group(df, "Vx_dev", reference_n, group_by,
+                              plot_labels, "Vx RMSE [m/s]")
+  
+  ggplot_rms_by_ref_and_group(df, "Vy_dev", reference_n, group_by,
+                              plot_labels, "Vy RMSE [m/s]")
+  
+  ggplot_rms_by_ref_and_group(df, "heading_dev_deg", reference_n, group_by,
+                              plot_labels, "Heading RMSE [deg]")
 }
