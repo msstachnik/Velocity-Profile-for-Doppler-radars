@@ -3,10 +3,15 @@ rm(list = ls())
 base::source("utilities.R")
 base::source("ls_functions.R")
 
-vp = VP_sample(10, 0, -2, 2, 10)
-plot(vp$vp_sample$az_sample_deg,vp$vp_sample$rr_sample)
+vp = VP_sample(10, 30, 10, 10)
+vp$Vx_ref
+vp$Vy_ref
+plot(rad2deg(vp$az_sample),vp$rr_sample)
 
-model = lm(vp$vp_sample$rr_sample ~ cos(vp$vp_sample$az_sample) + sin(vp$vp_sample$az_sample) + 0)
+# Ordinary Least squered solution
+model = stats::lm(vp$rr_sample ~ cos(vp$az_sample) + sin(vp$az_sample) + 0)
 model
-model_ols = ols(vp$vp_sample);
+
+# Velocity profile ordinary solution
+model_ols = ols(vp);
 model_ols
