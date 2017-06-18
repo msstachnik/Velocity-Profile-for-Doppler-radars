@@ -89,7 +89,7 @@ rms = function(x)
 
 list2factor = function(x)
 {
-  y = as.factor(round(as.numeric(x)));
+  y = as.factor(x);
   y
 }
 
