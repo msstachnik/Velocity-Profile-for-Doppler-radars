@@ -17,7 +17,7 @@ ggplot_rms_by_ref_and_group_4_plots(two_samples, "mag_ref", "az_spread_ref_label
 # Deviation in function of reference heading for different magnitudes for 
 # different levels of azimuth spread
 plot_labels_two_samples_az = list(xlabel = "Reference Heading [deg]", 
-                                    title = "Analysis of Velocity Profile solution accuracy for ow n samples and very low azimuth spread",
+                                    title = "Analysis of Velocity Profile solution accuracy for low n samples and very low azimuth spread",
                                     legend = "Reference\nmagnitude\n[m/s]");
 ggplot_rms_by_ref_and_group_4_plots(base::subset(two_samples, (az_spread_ref_label == "very low")),
                                     "heading_ref", "mag_ref_label", plot_labels_two_samples_az)
