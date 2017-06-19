@@ -1,5 +1,5 @@
 # Fit Wrapper
-fit_wrapper = function(vp_list, fit_function)
+fit_wrapper = function(vp_list, fit_function, label = "nothing")
 {
   vp_out_l = base::sapply(vp_list, fit_function, simplify = FALSE);
   
@@ -27,6 +27,7 @@ fit_wrapper = function(vp_list, fit_function)
                              labels = c("zero", "low", "medium", "high"));
   vp_out$az_spread_ref_label = cut(vp_out$az_spread_ref, breaks = c(-1, 4, 10, 30, 200), 
                                    labels = c("very low", "low", "medium", "high"));
+  vp_out$label = label;
   vp_out
 }
 
