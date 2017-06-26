@@ -6,6 +6,6 @@ base::source("fit_wrappers.R")
 load('vp_list.RData')
 
 # Run Ols for whole dataset
-vp_out = fit_wrapper(vp_list, ols, "ols");
+vp_out = fit_wrapper(vp_list, orth_nonlin_ls, "onls");
 
-save(vp_out, file = "ols_fit.RData")
+save(vp_out, file = "orth_nonlin_ls_fit.RData")
