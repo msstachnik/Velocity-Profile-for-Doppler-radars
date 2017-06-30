@@ -1,5 +1,6 @@
 ols = function(vp_sample)
 {
+  start_time <- Sys.time();
   # Ordinary Least Squares Regression implementation for Velocity Profile problem
   Sx = sum(vp_sample$rr_sample * base::cos(vp_sample$az_sample));
   Sy = sum(vp_sample$rr_sample * base::sin(vp_sample$az_sample));
@@ -14,11 +15,13 @@ ols = function(vp_sample)
   Vx = Wx/W;
   Vy = Wy/W;
   
-  out = list(Vx = Vx, Vy = Vy)
+  end_time <- Sys.time();
+  out = list(Vx = Vx, Vy = Vy, time = end_time - start_time)
 }
 
 orth_nonlin_ls = function(vp_sample)
 {
+  start_time <- Sys.time()
   # Orthogonal Nonlinear Least Squares Regression implementation for Velocity Profile problem
   
   # Initial solution from OLS
@@ -32,15 +35,17 @@ orth_nonlin_ls = function(vp_sample)
   model_onls = onls::onls(formula_onls, vp_sample, start = init_coefs, verbose = FALSE);
 
   # Populate only relevant outputs
-  out = list(Vx = model_onls$parONLS$Vx, Vy = model_onls$parONLS$Vy)
+  end_time <- Sys.time();
+  out = list(Vx = model_onls$parONLS$Vx, Vy = model_onls$parONLS$Vy, time = end_time - start_time)
 }
 
-odr = function(vp_sample, rr_sigma = 0.03, az_sigma = deg2rad(0.5), sigma_level = 3, cnv_thr = 1e-5)
+odr = function(vp_sample, rr_sigma = 0.03, az_sigma = deg2rad(0.5), sigma_level = 2, cnv_thr = 1e-3, max_iter = 10, use_jac = TRUE)
 {
+  start_time <- Sys.time();
   NI = az_sigma / rr_sigma;
   max_az_deviation = sigma_level * az_sigma;
   
-  ITERS = 1:100;
+  ITERS = 1:max_iter;
   POINTS = 1:length(vp_sample$az_sample);
   
   # Initial solution from OLS
@@ -53,7 +58,7 @@ odr = function(vp_sample, rr_sigma = 0.03, az_sigma = deg2rad(0.5), sigma_level 
   
   point_res = function(az_sample, vx, vy, ref_az, ref_rr, ni)
   {
-    res = (ref_rr - vx * cos(az_sample) - vx*sin(az_sample))^2 + ni*(ref_az - az_sample)^2
+    res = (ref_rr - vx*cos(az_sample) - vx*sin(az_sample))^2 + ni*(ref_az - az_sample)^2
   }
   jacobian = function(az_sample, vx, vy, ref_az, ref_rr, ni)
   {
@@ -77,12 +82,19 @@ odr = function(vp_sample, rr_sigma = 0.03, az_sigma = deg2rad(0.5), sigma_level 
         res = point_res(az_sample, vx, vy, ref_az, ref_rr, ni)
       }
       # jacobian function in this iteration
-      jac_fun = function(az_sample, vx = actual_coefs$Vx, vy = actual_coefs$Vy, ref_az = vp_sample$az_sample[j], 
-                         ref_rr = vp_sample$rr_sample[j], ni = NI)
+      if (use_jac)
       {
-        J = jacobian(az_sample, vx, vy, ref_az, ref_rr, ni)
+        jac_fun = function(az_sample, vx = actual_coefs$Vx, vy = actual_coefs$Vy, ref_az = vp_sample$az_sample[j], 
+                           ref_rr = vp_sample$rr_sample[j], ni = NI)
+        {
+          J = jacobian(az_sample, vx, vy, ref_az, ref_rr, ni)
+        }       
       }
-      
+      else
+      {
+        jac_fun = NULL;
+      }
+
       lm_sol = minpack.lm::nls.lm(par = actual_sample$az_sample[j], lower = limits[[j]][1], upper = limits[[j]][2],
                                   fn = res_func, jac = jac_fun);
       
@@ -102,6 +114,7 @@ odr = function(vp_sample, rr_sigma = 0.03, az_sigma = deg2rad(0.5), sigma_level 
       # Do nothing
     }
   }
-  out = list(Vx = actual_coefs$Vx, Vy = actual_coefs$Vy, n_iters = i)
+  end_time <- Sys.time()
+  out = list(Vx = actual_coefs$Vx, Vy = actual_coefs$Vy, n_iters = i, time = end_time - start_time)
 }
 

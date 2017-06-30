@@ -3,7 +3,7 @@ rm(list = ls())
 base::source("utilities.R")
 base::source("ls_functions.R")
 
-vp = VP_sample(10, 90, 10, 5)
+vp = VP_sample(10, 0, 3, 3)
 vp$Vx_ref
 vp$Vy_ref
 plot(rad2deg(vp$az_sample),vp$rr_sample)
@@ -21,6 +21,8 @@ model_ols
 model_onls = orth_nonlin_ls(vp);
 model_onls
 
-model_odr = odr(vp);
+model_odr = odr(vp, use_jac = FALSE);
 model_odr
 
+model_odr = odr(vp, use_jac = TRUE);
+model_odr
